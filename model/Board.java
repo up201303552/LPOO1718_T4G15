@@ -1,6 +1,6 @@
 package model;
 
-import com.sun.prism.paint.Color;
+import java.awt.Point;
 
 public class Board {
 
@@ -8,91 +8,17 @@ public class Board {
 	private static Hero myHero;
 	private static Guard myGuard;
 
-	public Board() {
-		// first row
-		boardData[0][0] = 'X';
-		boardData[0][1] = 'X';
-		boardData[0][2] = 'X';
-		boardData[0][3] = 'X';
-		boardData[0][4] = 'X';
-		boardData[0][5] = 'X';
-		boardData[0][6] = 'X';
-		boardData[0][7] = 'X';
-		boardData[0][8] = 'X';
-		boardData[0][9] = 'X';
-
-		// second row
-		boardData[1][0] = 'X';
-		boardData[1][4] = 'I';
-		boardData[1][6] = 'X';
-		boardData[1][9] = 'X';
-
-		// third row
-		boardData[2][0] = 'X';
-		boardData[2][1] = 'X';
-		boardData[2][2] = 'X';
-		boardData[2][4] = 'X';
-		boardData[2][5] = 'X';
-		boardData[2][6] = 'X';
-		boardData[2][9] = 'X';
-
-		// fourth row
-		boardData[3][0] = 'X';
-		boardData[3][2] = 'I';
-		boardData[3][4] = 'I';
-		boardData[3][6] = 'X';
-		boardData[3][9] = 'X';
-
-		// fifth row
-		boardData[4][0] = 'X';
-		boardData[4][1] = 'X';
-		boardData[4][2] = 'X';
-		boardData[4][4] = 'X';
-		boardData[4][5] = 'X';
-		boardData[4][6] = 'X';
-		boardData[4][9] = 'X';
-
-		// sixth row
-		boardData[5][0] = 'I';
-		boardData[5][9] = 'X';
-
-		// seventh row
-		boardData[6][0] = 'I';
-		boardData[6][9] = 'X';
-
-		// eighth row
-		boardData[7][0] = 'X';
-		boardData[7][1] = 'X';
-		boardData[7][2] = 'X';
-		boardData[7][4] = 'X';
-		boardData[7][5] = 'X';
-		boardData[7][6] = 'X';
-		boardData[7][7] = 'X';
-		boardData[7][9] = 'X';
-
-		// ninth row
-		boardData[8][0] = 'X';
-		boardData[8][2] = 'I';
-		boardData[8][4] = 'I';
-		boardData[8][6] = 'X';
-		boardData[8][7] = 'k';
-		boardData[8][9] = 'X';
-
-		boardData[9][0] = 'X';
-		boardData[9][1] = 'X';
-		boardData[9][2] = 'X';
-		boardData[9][3] = 'X';
-		boardData[9][4] = 'X';
-		boardData[9][5] = 'X';
-		boardData[9][6] = 'X';
-		boardData[9][7] = 'X';
-		boardData[9][8] = 'X';
-		boardData[9][9] = 'X';
+	public Board(char[][] board) {
+		for (int i = 0; i < this.boardData.length; i++) { 
+			for (int j = 0; j < this.boardData[i].length; j++) {
+				this.boardData[i][j] = board[i][j];
+			}
+		}
 
 		fillEmpty();
 
 		// initializes Hero
-		myHero = new Hero(1, 1, Color.RED);
+		myHero = new Hero(1, 1, 'H');
 		setHeroPos(myHero);
 
 		// initializes Guards
@@ -122,6 +48,7 @@ public class Board {
 			}
 
 		}
+		System.out.println();
 	}
 
 	public void setCharOnBoard(int x, int y, char ch) {
@@ -130,10 +57,12 @@ public class Board {
 
 	public boolean checkValidPosition(int x, int y) {
 
-		if (x < 10 && x >= 0 && y < 10 && y >= 0 && this.boardData[x][y] == ' ') {
+		if (x < 10 && x >= 0 && y < 10 && y >= 0 && this.boardData[x][y] == ' '
+				|| x < 10 && x >= 0 && y < 10 && y >= 0
+				&& this.boardData[x][y] == 'k') {
 			return true;
 		} else {
-			System.out.println("Cant place Hero in that position"
+			System.out.println("Cant place character in that position"
 					+ this.boardData[x][y]);
 			return false;
 		}
@@ -145,7 +74,7 @@ public class Board {
 
 	public void setHeroPos(Hero h) {
 		if (checkValidPosition(h.getHeroX(), h.getHeroY())) {
-			setCharOnBoard(h.getHeroX(), h.getHeroY(), 'H');
+			setCharOnBoard(h.getHeroX(), h.getHeroY(), h.getSymbol());
 		}
 	}
 
@@ -163,4 +92,47 @@ public class Board {
 		return myHero;
 	}
 
+	public boolean checkCollisionWithGuards(Hero myHero, Guard myGuard) {
+		if (myHero.getHeroX() - 1 == myGuard.getGuardX()
+				&& myHero.getHeroY() == myGuard.getGuardY()
+				|| myHero.getHeroX() + 1 == myGuard.getGuardX()
+				&& myHero.getHeroY() == myGuard.getGuardY()
+				|| myHero.getHeroX() == myGuard.getGuardX()
+				&& myHero.getHeroY() + 1 == myGuard.getGuardY()
+				|| myHero.getHeroX() == myGuard.getGuardX()
+				&& myHero.getHeroY() - 1 == myGuard.getGuardY()) {
+			return true;
+		}
+		return false;
+	}
+
+	public Point getKeyCoords() {
+		Point p = new Point(-1, -1);
+		for (int i = 0; i < this.boardData.length; i++) {
+			for (int j = 0; j < this.boardData[i].length; j++) {
+				if (this.boardData[i][j] == 'k') {
+					p.setLocation(i, j);
+					return p;
+				}
+			}
+		}
+		return p;
+	}
+
+	public boolean checkCollisionWithKey(Hero myHero, Point key) {
+		if (myHero.getHeroX() == key.getX() && myHero.getHeroY() == key.getY())
+			return true;
+		else
+			return false;
+	}
+	
+	public void openStairs(){
+		for (int i = 0; i < this.boardData.length; i++) {
+			for (int j = 0; j < this.boardData[i].length; j++) {
+				if(this.boardData[i][j] == 'I'){
+					this.boardData[i][j] = 'S';
+				}
+			}
+		}
+	}
 }

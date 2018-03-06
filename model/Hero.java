@@ -14,12 +14,20 @@ public class Hero {
 	/* represents the position of our hero in the bidimensional array */
 	private int heroX;
 	private int heroY;
-	private Color heroColor;
+	private char symbol;
 
-	public Hero(int initX, int initY, final Color color) {
-		heroX = initX;
-		heroY = initY;
-		heroColor = color;
+	public Hero(int initX, int initY, char representation) {
+		this.heroX = initX;
+		this.heroY = initY;
+		this.symbol = representation;
+	}
+
+	public char getSymbol() {
+		return symbol;
+	}
+
+	public void setSymbol(char symbol) {
+		this.symbol = symbol;
 	}
 
 	public int getHeroX() {
@@ -38,12 +46,5 @@ public class Hero {
 		this.heroY = heroY;
 	}
 
-	public Color getHeroColor() {
-		return heroColor;
-	}
-
-	public void setHeroColor(Color heroColor) {
-		this.heroColor = heroColor;
-	}
 
 }
